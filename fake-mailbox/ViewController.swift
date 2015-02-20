@@ -49,7 +49,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         mainScrollView.center.x = 160
         archiveScrollView.center.x = 480
         
-        
+        // Attach edge Pan to container View
         var edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
         edgeGesture.edges = UIRectEdge.Left
         self.containerView.addGestureRecognizer(edgeGesture)
@@ -66,6 +66,35 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         // Dispose of any resources that can be recreated.
     }
 
+
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.becomeFirstResponder()
+    }
+    
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent) {
+        if(event.subtype == UIEventSubtype.MotionShake) {
+            self.slideDownFeed()
+            delay(0.4) {
+                self.springBack()
+            }
+            
+        }
+    }
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
+    }
     
     func onEdgePan(sender: UIScreenEdgePanGestureRecognizer) {
         var location = sender.locationInView(view)
@@ -248,6 +277,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 //
         })
 
+    }
+    
+    func slideDownFeed(){
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.9, initialSpringVelocity: 2, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+            self.feedImageView.center.y = 687
+            }, completion: { (Bool) -> Void in
+                //
+        })
     }
     
     func showView(target: UIView) {
