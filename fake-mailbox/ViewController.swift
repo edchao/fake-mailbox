@@ -8,18 +8,308 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
+    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var mainSegmentedControl: UISegmentedControl!
+    
+    @IBOutlet weak var mainScrollView: UIScrollView!
+    @IBOutlet weak var feedImageView: UIImageView!
+    
+    @IBOutlet weak var msgContainerView: UIView!
+    @IBOutlet weak var msgImageView: UIImageView!
+    
+    @IBOutlet weak var msgColorView: UIView!
+    @IBOutlet weak var leftIcon: UIImageView!
+    @IBOutlet weak var rightIcon: UIImageView!
+    
+    @IBOutlet weak var overlayView: UIImageView!
+    @IBOutlet weak var listView: UIImageView!
+    
+    
+    @IBOutlet weak var archiveScrollView: UIScrollView!
+    @IBOutlet weak var archiveImageView: UIImageView!
+    
+    @IBOutlet weak var laterScrollView: UIScrollView!
+    @IBOutlet weak var laterImageView: UIImageView!
+    
+    var containerCenter : CGPoint!
+    var originCenter : CGPoint!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        self.overlayView.alpha = 0
+        self.listView.alpha = 0
+        
+        originCenter = msgImageView.center
+        mainScrollView.contentSize = CGSize(width: 320, height: 1288)
+        
+        // Scroll Setups
+        mainScrollView.center.x = 160
+        archiveScrollView.center.x = 480
+        
+        
+        var edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
+        edgeGesture.edges = UIRectEdge.Left
+        self.containerView.addGestureRecognizer(edgeGesture)
+        edgeGesture.delegate = self
+        
+
+        
     }
 
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
+    
+    func onEdgePan(sender: UIScreenEdgePanGestureRecognizer) {
+        var location = sender.locationInView(view)
+        var translation = sender.translationInView(view)
+        var velocity = sender.velocityInView(view)
+        
+        if sender.state == UIGestureRecognizerState.Began {
+            //Started
+            containerCenter = self.containerView.center
+            
+        }else if sender.state == UIGestureRecognizerState.Changed {
+            //Changing
+            self.containerView.center = CGPoint(x: containerCenter.x + translation.x, y: containerCenter.y)
+            
+        }else if sender.state == UIGestureRecognizerState.Ended {
+            //Ended
+            self.containerView.center = CGPoint(x: containerView.center.x + translation.x, y: containerCenter.y)
+
+            if velocity.x > 0 {
+                UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 20, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+                    self.containerView.center.x = 400
+                }, completion: { (Bool) -> Void in
+                    var containerPanGesture = UIPanGestureRecognizer(target: self, action: "onContainerPan:")
+                    self.containerView.addGestureRecognizer(containerPanGesture)
+                    containerPanGesture.delegate = self
+                })
+            }else if velocity.x < 0 {
+                UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 20, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+                    self.containerView.center.x = 160
+                    }, completion: { (Bool) -> Void in
+                        //
+                })
+            }
+            
+            
+        }
+    }
+
+    func onContainerPan(sender: UIPanGestureRecognizer) {
+        var location = sender.locationInView(view)
+        var translation = sender.translationInView(view)
+        var velocity = sender.velocityInView(view)
+        
+        if sender.state == UIGestureRecognizerState.Began {
+            //Started to Pan
+            containerCenter = self.containerView.center
+            
+        }else if sender.state == UIGestureRecognizerState.Changed {
+            //Panning
+            self.containerView.center = CGPoint(x: containerCenter.x + translation.x, y: containerCenter.y)
+            
+            
+            
+        }else if sender.state == UIGestureRecognizerState.Ended {
+            //Ended
+            if velocity.x > 0 {
+                UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.5, initialSpringVelocity: 20, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+                    self.containerView.center.x = 400
+                    }, completion: { (Bool) -> Void in
+                        //
+                })
+            }else if velocity.x < 0 {
+                UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.5, initialSpringVelocity: 20, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+                    self.containerView.center.x = 160
+                    }, completion: { (Bool) -> Void in
+                        //
+                })
+            }
+
+            
+        }
+    }
+
+    
+    @IBAction func didPanMsg(sender: UIPanGestureRecognizer) {
+        var location = sender.locationInView(view)
+        var translation = sender.translationInView(view)
+        
+        if sender.state == UIGestureRecognizerState.Began {
+            //
+        }else if sender.state == UIGestureRecognizerState.Changed {
+
+            // Movement
+            msgImageView.center.x = translation.x + originCenter.x
+            self.leftIcon.center.x = msgImageView.center.x - 160 - 30
+            self.rightIcon.center.x = msgImageView.center.x + 160 + 30
+            
+            // Conditionals
+            if msgImageView.center.x < 240 && msgImageView.center.x > 80{
+                msgColorView.backgroundColor = UIColor.lightGrayColor()
+                self.rightIcon.image = UIImage(named: "later_icon.png")
+                self.leftIcon.image = UIImage(named: "archive_icon.png")
+
+            }else if msgImageView.center.x <= 80 && msgImageView.center.x > 0{
+                msgColorView.backgroundColor = UIColor.orangeColor()
+                self.rightIcon.image = UIImage(named: "later_icon.png")
+
+            }else if msgImageView.center.x < 0 {
+                msgColorView.backgroundColor = UIColor.blueColor()
+                self.rightIcon.image = UIImage(named: "list_icon.png")
+
+            }else if msgImageView.center.x >= 240 && msgImageView.center.x < 320{
+                msgColorView.backgroundColor = UIColor.greenColor()
+                self.leftIcon.image = UIImage(named: "archive_icon.png")
+
+            }else if msgImageView.center.x > 320 {
+                msgColorView.backgroundColor = UIColor.blackColor()
+                self.leftIcon.image = UIImage(named: "delete_icon.png")
+
+            }
+
+            
+        }else if sender.state == UIGestureRecognizerState.Ended {
+        
+            
+            if msgImageView.center.x < 240 && msgImageView.center.x > 80{
+                springBack()
+            }else if msgImageView.center.x <= 80 && msgImageView.center.x > 0 {
+                springLeft()
+                showView(self.overlayView)
+            }else if msgImageView.center.x < 0 {
+                springLeft()
+                showView(self.listView)
+            }else if msgImageView.center.x >= 240 && msgImageView.center.x < 320{
+                springRight()
+            }else if msgImageView.center.x > 320 {
+                springRight()
+            }
+            
+        
+        }
+        
+    }
+    
+    
+    @IBAction func didTapOverlay(sender: UITapGestureRecognizer) {
+        hideView(self.overlayView)
+    }
+    
+    @IBAction func didTapList(sender: UITapGestureRecognizer) {
+        hideView(self.listView)
+    }
+    
+    func springBack() {
+
+        
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.5, initialSpringVelocity: 20, options:UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+            self.msgImageView.center.x = 160
+            }, completion: { (Bool) -> Void in
+                //
+        })
+    }
+    
+    func springRight() {
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.5, initialSpringVelocity: 20, options:UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+            self.msgImageView.center.x = 480
+            // Icon Movement
+            self.leftIcon.center.x = self.msgImageView.center.x - 160 - 30
+            self.rightIcon.center.x = self.msgImageView.center.x + 160 + 30
+            }, completion: { (Bool) -> Void in
+                self.slideUpFeed()
+        })
+    }
+    
+    func springLeft() {
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.5, initialSpringVelocity: 20, options:UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+            self.msgImageView.center.x = -160
+            // Icon Movement
+            self.leftIcon.center.x = self.msgImageView.center.x - 160 - 30
+            self.rightIcon.center.x = self.msgImageView.center.x + 160 + 30
+            }, completion: { (Bool) -> Void in
+                self.slideUpFeed()
+        })
+    }
+
+    func slideUpFeed() {
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.9, initialSpringVelocity: 2, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+            self.feedImageView.center.y = 601
+            }, completion: { (Bool) -> Void in
+                //
+        })
+
+    }
+    
+    func showView(target: UIView) {
+        
+        UIView.animateWithDuration(0.5, delay: 0.5, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+            target.alpha = 1
+        }) { (Bool) -> Void in
+            //
+        }
+        
+    }
+    
+    func hideView(target: UIView) {
+        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+            target.alpha = 0
+            }) { (Bool) -> Void in
+                //
+        }
+        
+    }
+    
+    
+    
+
+    @IBAction func didSwitchSegment(sender: AnyObject) {
+        var segmentIndex = self.mainSegmentedControl.selectedSegmentIndex
+        println(segmentIndex)
+        if segmentIndex == 0 {
+            UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+                self.laterScrollView.center.x = 160
+                self.mainScrollView.center.x = 480
+                self.archiveScrollView.center.x = 800
+
+            }, completion: { (Bool) -> Void in
+                //
+            })
+        }else if segmentIndex == 1 {
+            UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+                self.laterScrollView.center.x = -160
+                self.mainScrollView.center.x = 160
+                self.archiveScrollView.center.x = 480
+                
+                }, completion: { (Bool) -> Void in
+                    //
+            })
+        }else if segmentIndex == 2 {
+            UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
+                self.laterScrollView.center.x = -800
+                self.mainScrollView.center.x = -160
+                self.archiveScrollView.center.x = 160
+                
+                }, completion: { (Bool) -> Void in
+                    //
+            })
+
+        }
+    }
+    
+    
+
+    
+    
 
 }
 
