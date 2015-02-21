@@ -36,6 +36,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var containerCenter : CGPoint!
     var originCenter : CGPoint!
     
+    let greenColor = UIColor(red: 98/255, green: 217/255, blue: 98/255, alpha: 1)
+    let redColor = UIColor(red: 239/255, green: 84/255, blue: 12/255, alpha: 1)
+    let yellowColor = UIColor(red: 255/255, green: 204/255, blue: 0/255, alpha: 1)
+    let brownColor = UIColor(red: 216/255, green: 166/255, blue: 116/255, alpha: 1)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -177,6 +182,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             //
         }else if sender.state == UIGestureRecognizerState.Changed {
 
+            
+            
             // Movement
             msgImageView.center.x = translation.x + originCenter.x
             self.leftIcon.center.x = msgImageView.center.x - 160 - 30
@@ -189,19 +196,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 self.leftIcon.image = UIImage(named: "archive_icon.png")
 
             }else if msgImageView.center.x <= 80 && msgImageView.center.x > 0{
-                msgColorView.backgroundColor = UIColor.orangeColor()
+                msgColorView.backgroundColor = yellowColor
                 self.rightIcon.image = UIImage(named: "later_icon.png")
 
             }else if msgImageView.center.x < 0 {
-                msgColorView.backgroundColor = UIColor.blueColor()
+                msgColorView.backgroundColor = brownColor
                 self.rightIcon.image = UIImage(named: "list_icon.png")
 
             }else if msgImageView.center.x >= 240 && msgImageView.center.x < 320{
-                msgColorView.backgroundColor = UIColor.greenColor()
+                msgColorView.backgroundColor = greenColor
                 self.leftIcon.image = UIImage(named: "archive_icon.png")
 
             }else if msgImageView.center.x > 320 {
-                msgColorView.backgroundColor = UIColor.blackColor()
+                msgColorView.backgroundColor = redColor
                 self.leftIcon.image = UIImage(named: "delete_icon.png")
 
             }
