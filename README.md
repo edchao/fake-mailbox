@@ -12,3 +12,5 @@ Completed user stories:
 - [x] Overlay for list
 - [x] Edge Pan for menu
 - [x] shake to dismiss
+
+![Video Walkthrough](mailbox.gif)
