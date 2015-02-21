@@ -40,6 +40,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     let redColor = UIColor(red: 239/255, green: 84/255, blue: 12/255, alpha: 1)
     let yellowColor = UIColor(red: 255/255, green: 204/255, blue: 0/255, alpha: 1)
     let brownColor = UIColor(red: 216/255, green: 166/255, blue: 116/255, alpha: 1)
+    let blueColor = UIColor(red: 81/255, green: 185/255, blue: 219/255, alpha: 1)
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -320,6 +322,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         var segmentIndex = self.mainSegmentedControl.selectedSegmentIndex
         println(segmentIndex)
         if segmentIndex == 0 {
+            
+            self.mainSegmentedControl.tintColor = yellowColor
             UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
                 self.laterScrollView.center.x = 160
                 self.mainScrollView.center.x = 480
@@ -329,6 +333,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 //
             })
         }else if segmentIndex == 1 {
+            self.mainSegmentedControl.tintColor = blueColor
+
             UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
                 self.laterScrollView.center.x = -160
                 self.mainScrollView.center.x = 160
@@ -338,6 +344,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     //
             })
         }else if segmentIndex == 2 {
+            
+            self.mainSegmentedControl.tintColor = greenColor
+
             UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.AllowUserInteraction, animations: { () -> Void in
                 self.laterScrollView.center.x = -800
                 self.mainScrollView.center.x = -160
